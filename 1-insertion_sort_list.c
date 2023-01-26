@@ -1,38 +1,57 @@
 #include "sort.h"
 
+void swap(listint_t **head, listint_t *node1, listint_t *node2);
+
 /**
-*selection_sort - swaps in order by comparing from marker
-*@array: the array
-*@size: array length size
+*insertion_sort_list - sorts a doubly linked list with
+*the insertion sort algorithm
+*
+*@list: list to be sorted
+*
 *Return: void
 */
-
-void selection_sort(int *array, size_t size)
+void insertion_sort_list(listint_t **list)
 {
-	size_t i = 0, walker = 0, to_swap = 0;
-	int to_comp = 0;
+	listint_t *forw, *tmp;
 
-	if (size < 2)
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
-
-	for (i = 0; i < size - 1; i++)
+	for (forw = (*list)->next; forw && forw->prev; forw = forw->next)
 	{
-		to_comp = array[i];
-		to_swap = i;
-		for (walker = i; walker < size; walker++)
+		for (; forw && forw->prev && forw->n < forw->prev->n;
+		    forw = forw->prev)
 		{
-			if (array[walker] < to_comp)
-			{
-				to_swap = walker;
-				to_comp = array[walker];
-			}
-		}
-		if (to_swap != i)
-		{
-			array[i] += array[to_swap];
-			array[to_swap] = array[i] - array[to_swap];
-			array[i] -= array[to_swap];
-			print_array(array, size);
+			tmp = forw->prev;
+			swap(list, tmp, forw);
+			print_list(*list);
+			forw = forw->next;
 		}
 	}
+}
+
+/**
+*swap - swaps two nodes
+*@head: the head node
+*@node1: The first node
+*@node2: the second node
+*
+*Return: void
+*/
+void swap(listint_t **head, listint_t *node1, listint_t *node2)
+{
+	listint_t *prev, *next;
+
+	prev = node1->prev;
+	next = node2->next;
+
+	if (prev != NULL)
+		prev->next = node2;
+	else
+		*head = node2;
+	node1->prev = node2;
+	node1->next = next;
+	node2->prev = prev;
+	node2->next = node1;
+	if (next)
+		next->prev = node1;
 }
